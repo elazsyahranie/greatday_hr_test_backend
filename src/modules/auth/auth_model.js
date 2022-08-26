@@ -18,7 +18,14 @@ module.exports = {
     }, 
     getUserByUsername: (condition) => {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT FROM user WHERE ?', condition,  (error, result) => {
+            connection.query('SELECT * FROM user WHERE ?', condition,  (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    }, 
+    getUserByEmail: (condition) => {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM user WHERE ?', condition, (error, result) => {
                 !error ? resolve(result) : reject(new Error(error))
             })
         })
