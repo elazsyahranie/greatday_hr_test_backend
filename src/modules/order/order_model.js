@@ -1,28 +1,34 @@
 const connection = require('../../config/mysql')  
 
 module.exports = {
-    addOrder: (menu_id, customer_id) => {
+    addOrder: (data) => {
         return new Promise((resolve, reject) => {
-            // let query = 'START TRANSACTION'
-            const query = 'INSERT INTO ordered_items (menu_id, customer_id) VALUES ?'
-            // [items.map(item => [item.name, item.description, item.value])]
-            const values = [
-                [menu_id, customer_id]
-            ]
-            console.log(values)
-            connection.query(query, values, 
+            connection.query('INSERT INTO ordered_items SET ?', data, 
                 (error, result) => {
                     if (!error) {
                         const newResult = {
                             id: result.insertId, 
-                            menu_id: menu_id, 
-                            customer_id: customer_id
+                            ...data
                         }
                         resolve(newResult)
                     } else {
                         reject(new Error(error))
                     }
                 })
+        })
+    },
+    getItemOnBasketWithCustomerId: (id) => {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM basket WHERE customer_id = ?', id, (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
             })
-        }
+        })
+    }, 
+    getAllOrder: () => {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM ordered_items', (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    }
 }

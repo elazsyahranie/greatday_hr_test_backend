@@ -15,7 +15,7 @@ module.exports = {
                 }
             })
         })
-    }, 
+    },
     getMenuByName: (condition) => {
         return new Promise((resolve, reject) => {
             connection.query('SELECT * FROM menu WHERE ?', condition, (error, result) => {
@@ -25,6 +25,28 @@ module.exports = {
                         ...data
                     }
                     resolve(newResult)
+                } else {
+                    reject(new Error(error))
+                }
+            })
+        })
+    }, 
+    getAllMenu: () => {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM menu', (error, result) => {
+                if (!error) {
+                    resolve(result)
+                } else {
+                    reject(new Error(error))
+                }
+            })
+        })
+    }, 
+    getMenuById: (id) => {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM menu WHERE ?', id, (error, result) => {
+                if (!error) {
+                    resolve(result)
                 } else {
                     reject(new Error(error))
                 }

@@ -2,6 +2,9 @@ const helper = require('../../helpers/wrapper')
 const authModel = require('./auth_model')
 const bcrypt = require('bcrypt')
 require('dotenv').config()
+const jwt = require('jsonwebtoken')
+
+const dataRefreshToken = {}
 
 module.exports = {
     register: async (req, res) => {
@@ -38,5 +41,47 @@ module.exports = {
         } catch (error) {
             return helper.response(res, 400, 'Bad Request', error)
         } 
+    }, 
+    login: async (req, res) => {
+        try {
+            const { userName, password } = req.body 
+            const checkUserName = await authModel.getDataConditions({
+                username: userName
+              })
+        
+              console.log(checkUserName)    
+
+              if (checkUserName.length > 0) {
+                const checkPassword = bcrypt.compareSync(
+                  password,
+                  checkUserName[0].password
+                )
+        
+                if (checkPassword) {
+                  const payload = checkUserName[0]
+                  delete payload.user_password
+                  delete payload.user_pin
+                  const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
+                    expiresIn: '24h'
+                  })
+                  const refreshToken = jwt.sign(
+                    { ...payload },
+                    process.env.PRIVATE_KEY,
+                    {
+                      expiresIn: '48h'
+                    }
+                  )
+                  dataRefreshToken[checkUserName[0].user_id] = refreshToken
+                  const result = { ...payload, token, refreshToken }
+                  return helper.response(res, 200, 'Login Succesful !', result)
+                } else {
+                  return helper.response(res, 400, 'Incorrect password')
+                }
+              } else {
+                return helper.response(res, 404, 'Username does not exist')
+              }
+            } catch (error) {
+              return helper.response(res, 400, 'Bad Request', error)
+            }
+        }
     }
-}
