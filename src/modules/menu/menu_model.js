@@ -3,7 +3,7 @@ const connection = require('../../config/mysql')
 module.exports = {
     addMenu: (data) => {
         return new Promise((resolve, reject) => {
-            connection.query('INSERT INTO menu', data, (error, result) => {
+            connection.query('INSERT INTO menu SET ?', data, (error, result) => {
                 if (!error) {
                     const newResult = {
                         id: result.insertId, 
@@ -44,7 +44,7 @@ module.exports = {
     }, 
     getMenuById: (id) => {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT * FROM menu WHERE ?', id, (error, result) => {
+            connection.query('SELECT * FROM menu WHERE id = ?', id, (error, result) => {
                 if (!error) {
                     resolve(result)
                 } else {

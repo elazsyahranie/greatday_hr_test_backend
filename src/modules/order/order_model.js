@@ -24,6 +24,13 @@ module.exports = {
             })
         })
     }, 
+    getOrderWithId: (id) => {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT ordered_items.customer_id, user.id, user.name, user.username, ordered_items.menu_id, menu.id, menu.menu_name, menu.price FROM ordered_items INNER JOIN menu ON ordered_items.menu_id = menu.id INNER JOIN user ON ordered_items. customer_id = user.id WHERE ordered_items.customer_id = ?', id, (error, result) => {
+                !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
     getAllOrder: () => {
         return new Promise((resolve, reject) => {
             connection.query('SELECT * FROM ordered_items', (error, result) => {

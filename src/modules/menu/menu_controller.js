@@ -4,19 +4,22 @@ const menuModel = require('./menu_model')
 
 module.exports = {
     addMenu: async (req, res) => { 
-        const { menuName, menuType, withRice, menuDescription, menuAvailability, menuPrice } = req.body 
-        const setData = {
-            menu_name: menuName, 
-            menu_type: menuType, 
-            mix_with_rice: withRice, 
-            menu_description: menuDescription, 
-            menu_availability: menuAvailability, 
-            price: `Rp. ${menuPrice}` 
-        }
         try {
-            console.log("Add menu works!")
-        } catch {
-            console.log("It doesn't work")
+            const { menuName, menuType, withRice, menuDescription, menuAvailability, menuPrice } = req.body 
+            // const priceNumber = parseInt(menuPrice)
+            const setData = {
+                menu_name: menuName, 
+                menu_type: menuType, 
+                mix_with_rice: withRice, 
+                menu_description: menuDescription, 
+                menu_availability: menuAvailability, 
+                price: menuPrice 
+            }
+            const result = await menuModel.addMenu(setData)
+            return helper.response(res, 200, "Menu added", result)
+        } catch (error) {
+            console.log(error)
+            return helper.response(res, 400, "Bad request", error)
         }
     }, 
     getAllMenu: async(req, res) => {
