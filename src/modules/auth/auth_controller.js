@@ -45,42 +45,41 @@ module.exports = {
     login: async (req, res) => {
         try {
             const { userName, password } = req.body 
-            const checkUserName = await authModel.getDataConditions({
-                username: userName
-              })
+            const checkUserName = await authModel.getDataConditions(userName)
         
-              console.log(checkUserName)    
+              // console.log(userName)    
 
-              if (checkUserName.length > 0) {
-                const checkPassword = bcrypt.compareSync(
-                  password,
-                  checkUserName[0].password
-                )
+              // if (checkUserName.length > 0) {
+              //   const checkPassword = bcrypt.compareSync(
+              //     password,
+              //     checkUserName[0].password
+              //   )
         
-                if (checkPassword) {
-                  const payload = checkUserName[0]
-                  delete payload.user_password
-                  delete payload.user_pin
-                  const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
-                    expiresIn: '24h'
-                  })
-                  const refreshToken = jwt.sign(
-                    { ...payload },
-                    process.env.PRIVATE_KEY,
-                    {
-                      expiresIn: '48h'
-                    }
-                  )
-                  dataRefreshToken[checkUserName[0].user_id] = refreshToken
-                  const result = { ...payload, token, refreshToken }
-                  return helper.response(res, 200, 'Login Succesful !', result)
-                } else {
-                  return helper.response(res, 400, 'Incorrect password')
-                }
-              } else {
-                return helper.response(res, 404, 'Username does not exist')
-              }
+              //   if (checkPassword) {
+              //     const payload = checkUserName[0]
+              //     delete payload.user_password
+              //     delete payload.user_pin
+              //     const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
+              //       expiresIn: '24h'
+              //     })
+              //     const refreshToken = jwt.sign(
+              //       { ...payload },
+              //       process.env.PRIVATE_KEY,
+              //       {
+              //         expiresIn: '48h'
+              //       }
+              //     )
+              //     dataRefreshToken[checkUserName[0].user_id] = refreshToken
+              //     const result = { ...payload, token, refreshToken }
+              //     return helper.response(res, 200, 'Login Succesful !', result)
+              //   } else {
+              //     return helper.response(res, 400, 'Incorrect password')
+              //   }
+              // } else {
+              //   return helper.response(res, 404, 'Username does not exist')
+              // }
             } catch (error) {
+              console.log(error)
               return helper.response(res, 400, 'Bad Request', error)
             }
         }

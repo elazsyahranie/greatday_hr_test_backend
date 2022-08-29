@@ -1,4 +1,5 @@
 const connection = require('../../config/mysql')  
+const db = require('../../config/mysql')
 
 module.exports = {
     addOrder: (data) => {
@@ -26,7 +27,7 @@ module.exports = {
     }, 
     getAllOrder: () => {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT * FROM ordered_items', (error, result) => {
+            db.run('SELECT * FROM ordered_items', (error, result) => {
                 !error ? resolve(result) : reject(new Error(error))
             })
         })
