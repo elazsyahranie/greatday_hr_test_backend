@@ -6,12 +6,8 @@ module.exports = {
     addOrder: async (req, res) => {
         try {
             const { menuId, customerId } = req.body
-            const setData = {
-                menu_id: menuId, 
-                customer_id: customerId
-            }
-            const result = await orderModel.addOrder(setData)
-            return helper.response(res, 200, 'Order succesful!', result)    
+            await orderModel.addOrder(menuId, customerId)
+            return helper.response(res, 200, 'Order succesful!')    
         } catch (error) {
             console.log(error)
             return helper.response(res, 400, 'Bad Request', error)
