@@ -12,15 +12,6 @@ module.exports = {
             const { name, userName, userEmail, userPhone, userPassword, gender } = req.body 
             const salt = bcrypt.genSaltSync(10)
             const encryptPassword = bcrypt.hashSync(userPassword, salt)
-            // const setData = {
-            //     name: name, 
-            //     username: userName, 
-            //     authority: 'not_admin',
-            //     email: userEmail, 
-            //     phone: userPhone,
-            //     password: encryptPassword, 
-            //     gender: gender,
-            // }
 
             const findUsername = await authModel.getUserByUsername(userName)
             
@@ -35,15 +26,14 @@ module.exports = {
             if (findEmail.length > 0) {
                 return helper.response(res, 400, 'Email already taken')
             }
-            // const result = await authModel.register(
-            //     name, 
-            //     userName, 
-            //     userEmail, 
-            //     userPhone, 
-            //     userPassword, 
-            //     gender
-            // )
-            // delete result.password
+            await authModel.register(
+              name, 
+              userName, 
+              userEmail, 
+              userPhone, 
+              encryptPassword, 
+              gender
+            )
             return helper.response(res, 200, 'Registration succesful')
         } catch (error) {
             console.log(error)

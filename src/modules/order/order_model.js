@@ -1,4 +1,3 @@
-const connection = require('../../config/mysql')  
 const db = require('../../config/mysql')
 
 module.exports = {
