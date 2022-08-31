@@ -20,5 +20,12 @@ module.exports = {
         } else {
           return helper.response(res, 403, 'Please login first !')
         }
+      }, 
+      isAdmin: (req, res, next) => {
+        if (req.decodeToken.authority === 'admin') {
+          next()
+        } else {
+          return helper.response(res, 403, 'Only admin can access this!')
+        }
       }
 }

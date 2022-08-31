@@ -6,10 +6,10 @@ const orderModel = require('./basket_model')
 module.exports = {
     addToBasket: async (req, res) => {
         try {
-            const {customerId, menuId} = req.body
+            const { customerId } = req.body
             const setData = {
-                customer_id: parseInt(customerId), 
-                menu_id: parseInt(menuId)
+                customer_id: req.decodeToken.id, 
+                menu_id: parseInt(customerId)
             }
 
             const checkAvailability = await basketModel.checkAvailableorNot(setData.menu_id)
@@ -27,7 +27,7 @@ module.exports = {
     }, 
     getItemsByCustomerId: async (req, res) => {
         try {
-            const { id } = req.params 
+            const { id } = req.decodeToken.id
             const result = await basketModel.getItemsbyCustomerId(id) 
             return helper.response(res, 200, 'Here are your orders', result)
         } catch (error) {
