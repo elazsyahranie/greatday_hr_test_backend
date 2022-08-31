@@ -12,19 +12,10 @@ module.exports = {
             const { name, userName, userEmail, userPhone, userPassword, gender } = req.body 
             const salt = bcrypt.genSaltSync(10)
             const encryptPassword = bcrypt.hashSync(userPassword, salt)
-            const setData = {
-                name: name, 
-                username: userName, 
-                authority: 'not_admin',
-                email: userEmail, 
-                phone: userPhone,
-                password: encryptPassword, 
-                gender: gender,
-            }
 
-            const findUsername = await authModel.getUserByUsername({ username: userName })
+            const findUsername = await authModel.getUserByUsername(userName)
             
-            const findEmail = await authModel.getUserByEmail({ email: userEmail })
+            const findEmail = await authModel.getUserByEmail(userEmail)
 
             if (findUsername.length > 0 && findEmail.length > 0) {
                 return helper.response(res, 400, 'Username and Email already taken')
@@ -35,21 +26,26 @@ module.exports = {
             if (findEmail.length > 0) {
                 return helper.response(res, 400, 'Email already taken')
             }
-            const result = await authModel.register(setData)
-            delete setData.password
-            return helper.response(res, 200, 'Registration succesful', result)
+            await authModel.register(
+              name, 
+              userName, 
+              userEmail, 
+              userPhone, 
+              encryptPassword, 
+              gender
+            )
+            return helper.response(res, 200, 'Registration succesful')
         } catch (error) {
+            console.log(error)
             return helper.response(res, 400, 'Bad Request', error)
         } 
     }, 
     login: async (req, res) => {
         try {
             const { userName, password } = req.body 
-            const checkUserName = await authModel.getDataConditions({
-                username: userName
-              })
+            const checkUserName = await authModel.getDataConditions(userName)
         
-              console.log(checkUserName)    
+              // console.log(userName)    
 
               if (checkUserName.length > 0) {
                 const checkPassword = bcrypt.compareSync(
@@ -81,6 +77,7 @@ module.exports = {
                 return helper.response(res, 404, 'Username does not exist')
               }
             } catch (error) {
+              console.log(error)
               return helper.response(res, 400, 'Bad Request', error)
             }
         }

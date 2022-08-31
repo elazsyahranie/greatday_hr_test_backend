@@ -1,39 +1,34 @@
-const connection = require('../../config/mysql')  
+const db = require('../../config/mysql')
 
 module.exports = {
-    addMenu: (data) => {
+    addMenu: (
+            menu_name, 
+            menu_type,
+            mix_with_rice, 
+            menu_description, 
+            menu_availability, 
+            price
+        ) => {
         return new Promise((resolve, reject) => {
-            connection.query('INSERT INTO menu SET ?', data, (error, result) => {
-                if (!error) {
-                    const newResult = {
-                        id: result.insertId, 
-                        ...data
-                    }
-                    resolve(newResult)
-                } else {
-                    reject(new Error(error))
-                }
+            let query = 'INSERT INTO menu '
+            query += '(menu_name, menu_type, mix_with_rice, menu_description, '
+            query += 'menu_availability, price) '
+            query += 'VALUES (?, ?, ?, ?, ?, ?)'
+            db.run(query, [
+                menu_name, 
+                menu_type,
+                mix_with_rice, 
+                menu_description, 
+                menu_availability, 
+                price
+            ], (error) => {
+                !error ? resolve() : reject(new Error(error))
             })
         })
     },
-    getMenuByName: (condition) => {
-        return new Promise((resolve, reject) => {
-            connection.query('SELECT * FROM menu WHERE ?', condition, (error, result) => {
-                if (!error) {
-                    const newResult = {
-                        id: result.insertId, 
-                        ...data
-                    }
-                    resolve(newResult)
-                } else {
-                    reject(new Error(error))
-                }
-            })
-        })
-    }, 
     getAllMenu: () => {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT * FROM menu', (error, result) => {
+            db.all('SELECT * FROM menu', (error, result) => {
                 if (!error) {
                     resolve(result)
                 } else {
@@ -44,7 +39,7 @@ module.exports = {
     }, 
     getMenuById: (id) => {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT * FROM menu WHERE id = ?', id, (error, result) => {
+            db.all('SELECT * FROM menu WHERE id = ?', [id], (error, result) => {
                 if (!error) {
                     resolve(result)
                 } else {

@@ -6,19 +6,10 @@ require('dotenv').config()
 module.exports = {
     addOrder: async (req, res) => {
         try {
-            const { menuId, numberOfItems } = req.body
-            const setData = {
-                menu_id: menuId, 
-                customer_id: req.decodeToken.id, 
-                number_of_items_ordered: numberOfItems
-            }
-            const checkAvailability = await menuModel.getMenuById(menuId)
-            if (checkAvailability[0].menu_availability === 0) {
-                return helper.response(res, 400, 'Menu out of stock!')
-            } else {
-                const result = await orderModel.addOrder(setData)
-                return helper.response(res, 200, 'Order succesful!', result) 
-            }   
+            const { menuId } = req.body
+            const customerId = req.decodeToken.id
+            await orderModel.addOrder(menuId, customerId)
+            return helper.response(res, 200, 'Order succesful!')
         } catch (error) {
             console.log(error)
             return helper.response(res, 400, 'Bad Request', error)

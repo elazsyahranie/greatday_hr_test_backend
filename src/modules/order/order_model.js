@@ -1,25 +1,17 @@
-const connection = require('../../config/mysql')  
+const db = require('../../config/mysql')
 
 module.exports = {
-    addOrder: (data) => {
+    addOrder: (menuId, customerId) => {
         return new Promise((resolve, reject) => {
-            connection.query('INSERT INTO ordered_items SET ?', data, 
-                (error, result) => {
-                    if (!error) {
-                        const newResult = {
-                            id: result.insertId, 
-                            ...data
-                        }
-                        resolve(newResult)
-                    } else {
-                        reject(new Error(error))
-                    }
+            db.run('INSERT INTO ordered_items (menu_id, customer_id) VALUES (?, ?)', [ menuId, customerId ], 
+                (error) => {
+                    !error ? resolve() : reject(new Error(error))
                 })
         })
     },
     getItemOnBasketWithCustomerId: (id) => {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT * FROM basket WHERE customer_id = ?', id, (error, result) => {
+            db.all('SELECT * FROM basket WHERE customer_id = ?', id, (error, result) => {
                 !error ? resolve(result) : reject(new Error(error))
             })
         })
@@ -33,7 +25,7 @@ module.exports = {
     },
     getAllOrder: () => {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT * FROM ordered_items', (error, result) => {
+            db.all('SELECT * FROM ordered_items', (error, result) => {
                 !error ? resolve(result) : reject(new Error(error))
             })
         })
