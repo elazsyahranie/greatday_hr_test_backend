@@ -26,21 +26,6 @@ module.exports = {
             })
         })
     },
-    // getMenuByName: (condition) => {
-    //     return new Promise((resolve, reject) => {
-    //         connection.query('SELECT * FROM menu WHERE ?', condition, (error, result) => {
-    //             if (!error) {
-    //                 const newResult = {
-    //                     id: result.insertId, 
-    //                     ...data
-    //                 }
-    //                 resolve(newResult)
-    //             } else {
-    //                 reject(new Error(error))
-    //             }
-    //         })
-    //     })
-    // }, 
     getAllMenu: () => {
         return new Promise((resolve, reject) => {
             db.all('SELECT * FROM menu', (error, result) => {
