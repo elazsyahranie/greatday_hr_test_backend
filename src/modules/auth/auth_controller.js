@@ -36,7 +36,6 @@ module.exports = {
             )
             return helper.response(res, 200, 'Registration succesful')
         } catch (error) {
-            console.log(error)
             return helper.response(res, 400, 'Bad Request', error)
         } 
     }, 
@@ -44,8 +43,6 @@ module.exports = {
         try {
             const { userName, password } = req.body 
             const checkUserName = await authModel.getDataConditions(userName)
-        
-              // console.log(userName)    
 
               if (checkUserName.length > 0) {
                 const checkPassword = bcrypt.compareSync(
@@ -77,7 +74,6 @@ module.exports = {
                 return helper.response(res, 404, 'Username does not exist')
               }
             } catch (error) {
-              console.log(error)
               return helper.response(res, 400, 'Bad Request', error)
             }
         }

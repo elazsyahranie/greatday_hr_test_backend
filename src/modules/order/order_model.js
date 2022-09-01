@@ -23,7 +23,16 @@ module.exports = {
     }, 
     getOrderWithId: (id) => {
         return new Promise((resolve, reject) => {
-            db.all('SELECT ordered_items.customer_id, user.id, user.name, user.username, ordered_items.menu_id, menu.id, menu.menu_name, menu.price FROM ordered_items INNER JOIN menu ON ordered_items.menu_id = menu.id INNER JOIN user ON ordered_items. customer_id = user.id WHERE ordered_items.customer_id = ?', id, (error, result) => {
+            let query = 'SELECT ' 
+            query += 'ordered_items.customer_id, '
+            query += 'user.id, user.name, user.username, ' 
+            query += 'ordered_items.menu_id, ' 
+            query += 'menu.id, menu.menu_name, menu.price ' 
+            query += 'FROM ordered_items '
+            query += 'INNER JOIN menu ON ordered_items.menu_id = menu.id '
+            query += 'INNER JOIN user ON ordered_items.customer_id = user.id '
+            query += 'WHERE ordered_items.customer_id = ?'  
+            db.all(query, id, (error, result) => {
                 !error ? resolve(result) : reject(new Error(error))
             })
         })

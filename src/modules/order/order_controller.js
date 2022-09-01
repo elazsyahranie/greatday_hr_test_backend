@@ -41,8 +41,10 @@ module.exports = {
         try {
             const { id } = req.decodeToken
             const result = await orderModel.getOrderWithId(id) 
+            console.log(`Here is the ID ${id}`)
             return helper.response(res, 200, `Displaying order of ID - ${id}`, result)
         } catch (error) {
+            console.log(error)
             return helper.response(res, 400, 'Bad request', error)
         }
     }

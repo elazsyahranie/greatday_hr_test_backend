@@ -32,7 +32,6 @@ module.exports = {
             const result = await menuModel.getMenuById(id)
             return helper.response(res, 200, `Displaying menu with ID ${id}`, result)
         } catch (error) {
-            console.log(error)
             return helper.response(res, 400, "Bad request", error)
         }
     }

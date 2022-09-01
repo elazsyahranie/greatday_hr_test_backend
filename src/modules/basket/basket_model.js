@@ -1,34 +1,31 @@
 const connection = require('../../config/mysql')  
+const db = require('../../config/mysql')
 
 module.exports = {
-    addToBasket: (data) => {
+    addToBasket: (customer_id, menu_id) => {
         return new Promise((resolve, reject) => {
-            connection.query('INSERT INTO basket SET ?', 
-            data, (error, result) => {
-                // console.log(data)
-                if (!error) {
-                    const newResult = {
-                        id: result.insertId, 
-                        ...data
-                    }
-                    resolve(newResult)
-                } else {
-                    reject(new Error(error))
-                }
+            db.run('INSERT INTO basket (customer_id, menu_id) VALUES (?, ?)', 
+            [customer_id, menu_id], (error) => {
+                !error ? resolve() : reject (new Error(error))
             })
         })
-    }, 
-    checkAvailableorNot: (id) => {
+    },
+    getItemByIdAndCustomer: (customer_id, menu_id) => {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT * FROM menu WHERE id = ?', id, (error, result) => {
-                if (!error) {
-                    resolve(result)
-                } else {
-                    reject(new Error(error))
-                }
+            db.all('SELECT * FROM basket WHERE customer_id = ? AND menu_id = ?', 
+                [customer_id, menu_id], (error, result) => {
+                !error ? resolve(result) : reject (new Error(error))
             })
         })
-    }, 
+    },
+    updateNumberOfItems: (number_of_items, customer_id) => {
+        return new Promise((resolve, reject) => {
+            const query = 'UPDATE basket SET number_of_items = ? WHERE customer_id = ?'
+            db.run(query, [number_of_items, customer_id], (error) => {
+                !error ? resolve() : reject (new Error(error))
+            })
+        })
+    },
     getItemsbyCustomerId: (id) => {
         return new Promise((resolve, reject) => {
             let query = 'SELECT basket.customer_id, basket.menu_id, user.id, user.name, user.name, menu.id, menu.menu_name, menu.price '
@@ -36,9 +33,8 @@ module.exports = {
             query += 'INNER JOIN user ON basket.customer_id = user.id '
             query += 'INNER JOIN menu ON basket.menu_id = menu.id '
             query += 'WHERE basket.customer_id = ?'
-            connection.query(
+            db.all(
                 query, id, (error, result) => {
-                console.log(query)
                 if (!error) {
                     resolve(result)
                 } else {
