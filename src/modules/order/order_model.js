@@ -6,10 +6,12 @@ module.exports = {
             let query = 'INSERT INTO ordered_items '
             query += '(menu_id, customer_id, number_of_items_ordered) '
             query += 'VALUES (?, ?, ?)'
-            db.run(query, [ menuId, customerId, numberOfItems ], 
-                (error) => {
-                    !error ? resolve() : reject(new Error(error))
-                })
+            for (let i = 0; i < menuId.length; i++) {
+                db.run(query, menuId[i], [customerId], numberOfItems[i], 
+                    (error) => {
+                        !error ? resolve() : reject(new Error(error))
+                    })
+            }
         })
     },
     getItemOnBasketWithCustomerId: (id) => {

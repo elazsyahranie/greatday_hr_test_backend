@@ -9,16 +9,23 @@ module.exports = {
             const { menuId, numberOfItems } = req.body
             const customerId = req.decodeToken.id
 
-            const checkAvailiability = await menuModel.getMenuById(menuId) 
-            if (checkAvailiability[0].menu_availability === 0) {
-                return helper.response(res, 400, 'Sorry but the menu is currently unavailable')
-            } else {
-                await orderModel.addOrder(menuId, customerId, numberOfItems)
-                return helper.response(res, 200, 'Order succesful!')
-            }
+            // console.log(`This is menu ID`) 
+            // console.log(menuId) 
+            // console.log(`This s number of items`) 
+            // console.log(numberOfItems)
+
+            // const checkAvailiability = await menuModel.getMenuById(menuId) 
+            // if (checkAvailiability[0].menu_availability === 0) {
+            //     return helper.response(res, 400, 'Sorry but the menu is currently unavailable')
+            // } else {
+            //     await orderModel.addOrder(menuId, customerId, numberOfItems)
+            //     return helper.response(res, 200, 'Order succesful!')
+            // }
+            await orderModel.addOrder(menuId, customerId, numberOfItems)
+            return helper.response(res, 200, 'Order succesful!')
         } catch (error) {
             console.log(error)
-            return helper.response(res, 400, 'Bad Request', error)
+            return helper.response(res, 400, 'Bad Request')
         }
     }, 
     getAllOrder: async (req, res) => {
