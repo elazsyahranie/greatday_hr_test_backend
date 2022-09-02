@@ -1,4 +1,3 @@
-const connection = require('../../config/mysql')  
 const db = require('../../config/mysql')
 
 module.exports = {
@@ -7,6 +6,14 @@ module.exports = {
             db.run('INSERT INTO basket (customer_id, menu_id) VALUES (?, ?)', 
             [customer_id, menu_id], (error) => {
                 !error ? resolve() : reject (new Error(error))
+            })
+        })
+    },
+    getItembyCustomer: (id) => {
+        return new Promise((resolve, reject) => {
+            let query = 'SELECT * FROM basket WHERE customer_id = ?'
+            db.all(query, [id], (error, result) => {
+                !error ? resolve(result) : reject (new Error(error))
             })
         })
     },

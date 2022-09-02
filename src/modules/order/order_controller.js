@@ -1,34 +1,36 @@
 const helper = require('../../helpers/wrapper') 
 const orderModel = require('./order_model')
-const menuModel = require('../menu/menu_model')
+const basketModel = require('../basket/basket_model')
 require('dotenv').config() 
 
 module.exports = {
     addOrder: async (req, res) => {
         try {
-            const { menuId, numberOfItems } = req.body
-            const customerId = req.decodeToken.id
+            const { id } = req.decodeToken
+            const getItemOnBasket = await basketModel.getItembyCustomer(id)
 
-            // console.log(`This is menu ID`) 
-            // console.log(menuId) 
-            // console.log(`This s number of items`) 
-            // console.log(numberOfItems)
+            const menuIdArray = getItemOnBasket.map(function (obj) {
+                return obj.menu_id
+            })
 
-            // const checkAvailiability = await menuModel.getMenuById(menuId) 
-            // if (checkAvailiability[0].menu_availability === 0) {
-            //     return helper.response(res, 400, 'Sorry but the menu is currently unavailable')
-            // } else {
-            //     await orderModel.addOrder(menuId, customerId, numberOfItems)
-            //     return helper.response(res, 200, 'Order succesful!')
-            // }
-            await orderModel.addOrder(menuId, customerId, numberOfItems)
-            return helper.response(res, 200, 'Order succesful!')
+            const numberItemsArray = getItemOnBasket.map(function (obj) {
+                return obj.number_of_items
+            })
+
+            await orderModel.deleteItem(id)
+
+            const reCheckItem = await basketModel.getItembyCustomer(id)
+            if (reCheckItem.length === 0) {
+                await orderModel.addOrder(menuIdArray, id, numberItemsArray)
+                return helper.response(res, 200, 'Order succesful!')
+            } else {
+                return helper.response(res, 400, 'Items at basket not removed')
+            }
         } catch (error) {
-            console.log(error)
-            return helper.response(res, 400, 'Bad Request')
+            return helper.response(res, 400, 'Bad Request', error)
         }
     }, 
-    getAllOrder: async (req, res) => {
+    getAllOrder: async (_req, res) => {
         try {
             const result = await orderModel.getAllOrder() 
             return helper.response(res, 200, 'Displaying all order', result)

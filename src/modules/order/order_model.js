@@ -14,6 +14,14 @@ module.exports = {
             }
         })
     },
+    deleteItem: (id) => {
+        return new Promise((resolve, reject) => {
+            const query = 'DELETE FROM basket WHERE customer_id = ?'
+            db.run(query, [id], (error) => {
+                !error ? resolve(1) : reject(new Error(error))
+            })
+        })
+    },
     getItemOnBasketWithCustomerId: (id) => {
         return new Promise((resolve, reject) => {
             db.all('SELECT * FROM basket WHERE customer_id = ?', id, (error, result) => {
